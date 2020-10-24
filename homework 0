@@ -1,0 +1,157 @@
+;***********************************************
+; Please do not copy the entire code
+; the auto check will find out
+; only providing the thoughts
+;************************************************
+
+
+;Question 1
+;a)
+(* (- (* 7 3) (- 8 (string-length (string-append "CS" "1101")))) (/ 32 16))
+
+;;  (* (- 21 (- 8 (string-length (string-append "CS" "1101")))) (/ 32 16))
+;;  (* (- 21 (- 8 (string-length  "CS1101"))) (/ 32 16))
+;;  (* (- 21 (- 8 6)) (/ 32 16))
+;;  (* (- 21 2) (/ 32 16))
+;;  (* 19 (/ 32 16))
+;;  (* 19 2)
+;;  38
+;;  Total Steps: 7
+
+;b)
+(define (triple n)
+  (* n 3))
+(if (> (triple 2) (triple (/ 12 4)))
+    (sqrt (+ 4 (* 15 4)))
+    107)
+;;(if (> (* 2 3) (triple (/ 12 4)))
+;;   (sqrt (+ 4 (* 15 4)))
+;;   107)
+
+;;(if (> 6 (triple (/ 12 4)))
+;;   (sqrt (+ 4 (* 15 4)))
+;;   107)
+
+;;(if (> 6 (triple 3))
+;;   (sqrt (+ 4 (* 15 4)))
+;;   107)
+
+;;(if (> 6 (* 3 3))
+;;   (sqrt (+ 4 (* 15 4)))
+;;   107)
+
+;;(if (> 6 9)
+;;   (sqrt (+ 4 (* 15 4)))
+;;   107)
+
+;;(if #false
+;;   (sqrt (+ 4 (* 15 4)))
+;;   107)
+
+;;107
+
+;;Total Steps: 7
+
+;=======================
+;Composing Function
+;Question 2
+(require 2htdp/image)
+
+
+;; four-square: Image -> Image
+;; parameter name: pic
+;; given a picture to convert to flipped-picture
+
+(define (four-square pic)
+    (above (beside (flip-horizontal pic) pic)
+          (flip-vertical (beside (flip-horizontal pic)pic)
+                         )))
+
+(define pix .)
+
+; For test purpose
+(four-square pix)
+
+
+;=======================
+;Question 3
+
+;define constants
+(define event 1500)
+(define attFee 2)
+
+;; cost:  Natural -> Natural
+;; parameter name: att 
+;; consumes the number of attendees at an event and produces the cost to hold events
+(define (cost att)
+  (+ event  (* attFee att) ))
+
+(check-expect (cost 1) 1502) ;check with one attendee
+(check-expect (cost 0) 1500) ;check boundary - none attendee
+(check-expect (cost 100) 1700) ;check normal number
+
+
+;; cost:  Natural Number -> Number
+;; parameter name: att price
+;; consumes the number of attendees and ticket price to produce the income
+(define (income att price)
+  (* att price))
+
+(check-expect (income 0 0) 0) ;check both boundary
+(check-expect (income 1 0) 0) ;check one boundary - free ticket
+(check-expect (income 0 20) 0) ;check one boundary - no attendee
+(check-expect (income 1 20) 20) ;check one attendee with ticket price
+(check-expect (income 1 1.99) 1.99) ;check decimal number
+(check-expect (income 10 20) 200) ;check normal attendee with ticket price
+
+;; profit: Natural Number -> Number
+;; parameter names: att price
+;; consumes the number of attendees and the ticket price to produce the profit for the event
+(define (profit att price)
+  (- (income att price) (cost att)))
+
+(check-expect (profit 0 0) -1500) ;check both boundary
+(check-expect (profit 1 0) -1502) ;check one boundary - free ticket
+(check-expect (profit 0 20) -1500) ;check one boundary - no attendee
+(check-expect (profit 10 20) -1320) ;check negative integer profit
+(check-expect (profit 10 15.99) -1360.1) ;check negative decimal profit
+(check-expect (profit 20 150) 1460) ;check positive integer profit
+(check-expect (profit 20 150.99) 1479.8) ;check positive decimal profit
+
+
+
+;=======================
+; Question 4
+
+; define constant
+(define bankFee 1000)
+(define rate 0.04)
+(define time 30)
+
+;; total-house-cost: Natural Natural -> Natural
+;; parameter name: prcie dp
+;; consumes the purchase price of the house and amount of down-payment
+;;   to produce the grand total payment
+(define (total-house-cost price dp)
+  (+ price (interest (principal price dp)) bankFee))
+
+(check-expect (total-house-cost 0 0) 1000) ;check boundary
+(check-expect (total-house-cost 6 9) 1002.4);check purchase price smaller than down-payment
+(check-expect (total-house-cost 9 6) 1012.6) ;check purchase price larger than down-payment and decimal total cost
+(check-expect (total-house-cost 1000 1000) 2000) ;check purchase price equal to down-payment 
+(check-expect (total-house-cost 2000 1000) 4200) ;check integer total cost 
+
+; Helper function
+;#1
+(define (interest amount)
+  (* rate amount time))
+(check-expect (interest 0) 0) ;check boundary
+(check-expect (interest 1) 1.2) ;check integer input and decimal interest
+(check-expect (interest 2.5) 3) ;check decimal input and integer interest
+;#2
+(define (principal pur down)
+  (- pur down))
+(check-expect (principal 0 0) 0) ;check boundary
+(check-expect (principal 1 2) -1) ;check negative principal
+(check-expect (principal 1.5 1) 0.5) ;check decimal
+(check-expect (principal 2 1) 1) ;check positive principal
